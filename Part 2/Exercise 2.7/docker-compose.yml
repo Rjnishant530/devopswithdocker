@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  frontend:
+    image: front-end
+    build: .
+    container_name: simple-front-end
+    ports:
+      - 3000:5000
+  backend:
+    image: back-end
+    build: .
+    container_name: simple-back-end
+    ports:
+      - 7000:9000
+    environment:
+      REDIS_HOST: redis-cache
+      POSTGRES_HOST: db_redmine
+      POSTGRES_PASSWORD: example
+    depends_on:
+      - db
+  redis:
+    image: redis
+    build: .
+    container_name: redis-cache
+    command: redis-server --save 60 1
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+    container_name: db_redmine
+    volumes:
+      - type: bind
+        source: ./database
+        target: /var/lib/postgresql/data

@@ -1,0 +1,18 @@
+# Docker compose yml
+
+```yml
+version: "3.8"
+services:
+  frontend:
+    image: front-end
+    build: .
+    container_name: simple-front-end
+    ports:
+      - 3000:5000
+  backend:
+    image: back-end
+    build: .
+    container_name: simple-back-end
+    ports:
+      - 7000:9000
+```

@@ -1,0 +1,55 @@
+# docker-compose.yml
+
+```yml
+version: '3.8'
+services:
+  proxy:
+    image: nginx:1.19-alpine
+    container_name: proxy_server
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    image: front-end
+    build: ./front-end
+    container_name: simple-front-end
+
+  backend:
+    image: back-end
+    build: ./back-end
+    container_name: simple-back-end
+    environment:
+      REDIS_HOST: redis-cache
+      POSTGRES_HOST: db_redmine
+      POSTGRES_PASSWORD: example
+    depends_on:
+      - db
+  redis:
+    image: redis
+    build: .
+    container_name: redis-cache
+    command: redis-server --save 60 1
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+    container_name: db_redmine
+    volumes:
+      - database:/var/lib/postgresql/data
+volumes:
+  database:
+networks:
+  networkName:
+
+```
+
+# Output
+
+![](Screenshot.png)
